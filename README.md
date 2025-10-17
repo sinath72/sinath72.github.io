@@ -1,1 +1,71 @@
-# sinath72.github.io
+  VMess Decoder — وب‌اپ فرانت‌اند :root{ --bg:#0b0f14; --panel:#121821; --ink:#e7edf5; --muted:#9ab; --accent:#5bd6ff; --ok:#44d17a; --warn:#ffce5b; --bad:#ff6b6b; --line:#223041; } \*{box-sizing:border-box} body{ margin:0; padding:24px; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto; background:var(--bg); color:var(--ink); } h1{font-size:22px; margin:0 0 12px} h2{font-size:18px; margin:20px 0 8px} .app{max-width:1100px; margin:0 auto} .grid{display:grid; grid-template-columns:1.1fr .9fr; gap:16px} .card{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; box-shadow:0 0 0 1px rgba(255,255,255,0.02) inset, 0 12px 30px rgba(0,0,0,.25); } textarea, input\[type="text"\], input\[type="number"\]{ width:100%; background:#0b1119; color:var(--ink); border:1px solid var(--line); border-radius:12px; padding:10px 12px; font-size:14px; outline:none; } textarea{min-height:180px; resize:vertical} .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center} .btn{ appearance:none; border:none; cursor:pointer; border-radius:12px; padding:10px 14px; background:#122538; color:var(--ink); border:1px solid var(--line); font-weight:600; transition:transform .04s ease, background .2s ease, border-color .2s ease; } .btn:hover{background:#183149} .btn:active{transform:translateY(1px)} .btn.primary{background:linear-gradient(180deg, #1b6e85, #164e74); border-color:#1a6d90} .btn.good{background:linear-gradient(180deg, #1d7a4d, #125b37); border-color:#1f7a4e} .btn.warn{background:linear-gradient(180deg, #8e6d15, #5b470e); border-color:#8e6d15} .btn.bad{background:linear-gradient(180deg, #8e1f15, #5b150e); border-color:#8e1f15} .tag{display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); background:#0c131d; border:1px dashed var(--line); padding:6px 9px; border-radius:999px} .muted{color:var(--muted)} .tabs{display:flex; gap:6px; flex-wrap:wrap; margin:8px 0 0} .tab{padding:8px 12px; border-radius:10px; background:#0c131d; border:1px solid var(--line); cursor:pointer; font-weight:600; font-size:13px} .tab.active{background:#122538; border-color:#214561} table{width:100%; border-collapse:collapse; font-size:13px} th, td{border-bottom:1px solid var(--line); padding:8px 8px; text-align:right; vertical-align:top} th{color:#c7d6e6; font-weight:700; background:#0f1620; position:sticky; top:0} .pill{display:inline-flex; padding:3px 8px; border-radius:999px; border:1px solid var(--line); background:#0c131d; font-size:12px} .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace} .footer{margin-top:22px; font-size:12px; color:var(--muted)} .hr{height:1px; background:var(--line); margin:12px 0} details{background:#0c131d; border:1px solid var(--line); border-radius:10px; padding:8px 10px} details summary{cursor:pointer; font-weight:700; color:#cfe6ff} code.block{display:block; white-space:pre; overflow:auto; max-height:300px; background:#071019; border:1px solid var(--line); padding:10px; border-radius:10px; font-size:12px} .cols{display:grid; grid-template-columns:1fr 1fr; gap:10px} .hidden{display:none!important} .small{font-size:12px}
+
+وب‌اپ Decode لینک‌های vmess://
+==============================
+
+ورودی چندخطی، پردازش گروهی، Copy/Download، تبدیل به Clash و Sing-Box، و حتی ساخت لینک (Encode).
+
+ورودی
+-----
+
+چند لینک vmess:// را در کادر زیر پیست کنید (هر خط یک لینک)
+
+ نمونه تست URL-safe, بدون Padding, و چندخطی هم پشتیبانی می‌شود.
+
+Decode پاک‌کردن
+
+Encode (ساخت vmess://)
+----------------------
+
+       
+
+ساخت vmess:// کپی لینک پاک‌کردن فرم
+
+خروجی Encode
+
+خروجی
+-----
+
+خلاصه
+
+JSON
+
+Clash
+
+Sing-Box
+
+Log
+
+کپی جدول دانلود CSV
+
+#
+
+ps
+
+add
+
+port
+
+net
+
+host
+
+path
+
+tls
+
+Copy JSON دانلود JSON
+
+آرایه کامل آیتم‌ها
+
+کپی YAML دانلود YAML
+
+proxies (Clash)
+
+Copy JSON دانلود JSON
+
+outbounds (Sing-Box)
+
+ساخته‌شده سمت کاربر (Front-End Only). هیچ داده‌ای جایی ارسال نمی‌شود.
+
+// ---------- helpers ---------- const $ = sel => document.querySelector(sel); const $$ = sel => Array.from(document.querySelectorAll(sel)); function log(msg){ const el = $("#logs"); const time = new Date().toLocaleTimeString(); el.textContent += \`\[${time}\] ${msg}\\\\n\`; el.scrollTop = el.scrollHeight; } function toUrlSafeBase64(str){ return btoa(str).replace(/\\\\+/g, '-').replace(/\\\\//g, '\_').replace(/=+$/,''); } // robust Base64 decode: handle url-safe and missing padding function b64decode(input){ try{ let s = (input || "").trim(); s = s.replace(/\\\\s+/g, ''); // remove whitespace/newlines inside s = s.replace(/-/g, '+').replace(/\_/g, '/'); // url-safe → normal const pad = s.length % 4; if(pad) s += '='.repeat(4 - pad); return atob(s); }catch(e){ throw new Error("Base64 decode error: " + e.message); } } function safeJSONParse(txt){ try { return JSON.parse(txt); } catch(e){ throw new Error("JSON parse error: " + e.message + "\\\\nsource: " + txt.slice(0,180)); } } function copyText(text){ return navigator.clipboard.writeText(text); } function downloadFile(filename, content, type="text/plain"){ const blob = new Blob(\[content\], {type}); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 0); } function toCSV(rows){ const esc = v => (v==null?'':String(v)).replace(/"/g,'""'); const header = Object.keys(rows\[0\]||{}); const lines = \[header.map(h=>\`"${esc(h)}"\`).join(",")\]; for(const r of rows){ lines.push(header.map(h=>\`"${esc(r\[h\])}"\`).join(",")); } return lines.join("\\\\n"); } // ---------- VMess decode ---------- function decodeVmessLine(line){ let raw = line.trim(); if(!raw) return null; if(!raw.startsWith("vmess://")) throw new Error("این خط vmess:// نیست"); raw = raw.slice("vmess://".length); const jsonText = b64decode(raw); const obj = safeJSONParse(jsonText); return obj; } function summarize(item, idx){ return { "#": idx+1, ps: item.ps ?? "", add: item.add ?? "", port: item.port ?? "", net: item.net ?? "", host: item.host ?? item.sni ?? "", path: item.path ?? "", tls: item.tls ?? (item.tls===false?"none":"") // tolerate boolean/empty }; } // ---------- Clash builder (minimal) ---------- function vmessToClash(items){ const proxies = items.map((it, i)=>{ const name = it.ps || \`vmess-${i+1}\`; const tls = (it.tls && it.tls !== "none") ? true : false; const out = { name, type: "vmess", server: it.add || "", port: Number(it.port || 0), uuid: it.id || "", alterId: Number(it.aid || 0), cipher: it.scy || "auto", tls }; const net = it.net || "ws"; out.network = net; if(net === "ws"){ out\["ws-opts"\] = { path: it.path || "/", headers: {} }; const host = it.host || it.sni; if(host) out\["ws-opts"\].headers\["Host"\] = host; } if(it.sni) out\["servername"\] = it.sni; // some Clash forks honor this return out; }); // YAML-ish minimal dump const yaml = \["proxies:"\]; for(const p of proxies){ yaml.push(\` - name: ${JSON.stringify(p.name)}\`); yaml.push(\` type: vmess\`); yaml.push(\` server: ${JSON.stringify(p.server)}\`); yaml.push(\` port: ${p.port}\`); yaml.push(\` uuid: ${JSON.stringify(p.uuid)}\`); yaml.push(\` alterId: ${p.alterId}\`); yaml.push(\` cipher: ${JSON.stringify(p.cipher)}\`); yaml.push(\` tls: ${p.tls ? "true" : "false"}\`); if(p.servername) yaml.push(\` servername: ${JSON.stringify(p.servername)}\`); yaml.push(\` network: ${JSON.stringify(p.network)}\`); if(p.network === "ws"){ yaml.push(\` ws-opts:\`); yaml.push(\` path: ${JSON.stringify(p\["ws-opts"\].path)}\`); if(p\["ws-opts"\].headers && p\["ws-opts"\].headers.Host){ yaml.push(\` headers:\`); yaml.push(\` Host: ${JSON.stringify(p\["ws-opts"\].headers.Host)}\`); } } } return yaml.join("\\\\n"); } // ---------- Sing-Box builder (minimal) ---------- function vmessToSingBox(items){ const outs = items.map((it,i)=>{ const name = it.ps || \`vmess-${i+1}\`; const obj = { type: "vmess", tag: name, server: it.add || "", server\_port: Number(it.port || 0), uuid: it.id || "", security: it.scy || "auto", packet\_encoding: "none" }; const net = it.net || "ws"; if((it.tls && it.tls!=="none") || it.sni){ obj.tls = { enabled: true }; if(it.sni) obj.tls.server\_name = it.sni; } if(net === "ws"){ obj.transport = { type: "ws", path: it.path || "/", headers: {} }; const host = it.host || it.sni; if(host) obj.transport.headers.Host = host; } return obj; }); return JSON.stringify({ outbounds: outs }, null, 2); } // ---------- UI logic ---------- let lastItems = \[\]; function renderSummary(items){ const tb = $("#summaryTable tbody"); tb.innerHTML = ""; items.forEach((it, idx)=>{ const s = summarize(it, idx); const tr = document.createElement("tr"); tr.innerHTML = \` <td class="mono">${s\["#"\]}</td> <td class="mono">${escapeHtml(s.ps)}</td> <td class="mono">${escapeHtml(s.add)}</td> <td class="mono">${escapeHtml(s.port)}</td> <td class="mono">${escapeHtml(s.net)}</td> <td class="mono">${escapeHtml(s.host)}</td> <td class="mono">${escapeHtml(s.path)}</td> <td class="mono">${escapeHtml(s.tls)}</td>\`; tb.appendChild(tr); }); } function escapeHtml(str){ return String(str ?? "").replace(/\[&<>"'\]/g, s => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }\[s\])); } function handleDecode(){ const text = $("#inputBox").value; const lines = text.split(/\\\\r?\\\\n/).map(l=>l.trim()).filter(Boolean); const items = \[\]; let ok = 0, fail = 0; for(const ln of lines){ try{ if(!ln.startsWith("vmess://")) continue; const obj = decodeVmessLine(ln); items.push(obj); ok++; }catch(e){ log("خطا در این خط → " + ln.slice(0,80) + " ...\\\\n" + e.message); fail++; } } lastItems = items; renderSummary(items); $("#jsonOut").textContent = JSON.stringify(items, null, 2); $("#clashOut").textContent = vmessToClash(items); $("#singOut").textContent = vmessToSingBox(items); log(\`تمام شد. موفق: ${ok} | ناموفق: ${fail}\`); } function handleClear(){ $("#inputBox").value = ""; lastItems = \[\]; renderSummary(\[\]); $("#jsonOut").textContent = ""; $("#clashOut").textContent = ""; $("#singOut").textContent = ""; log("پاک شد."); } // Encode function handleEncode(){ const it = { v: "2", ps: $("#e\_ps").value.trim(), add: $("#e\_add").value.trim(), port: String($("#e\_port").value || "").trim(), id: $("#e\_id").value.trim(), aid: "0", scy: "auto", net: $("#e\_net").value.trim() || "ws", type: "none", host: $("#e\_host").value.trim(), path: $("#e\_path").value.trim() || "/", tls: $("#e\_tls").value.trim() || "tls" }; if(!it.add || !it.port || !it.id){ log("Encode: فیلدهای ستاره‌دار را پر کنید (add/port/id)."); } const txt = JSON.stringify(it); const b64 = toUrlSafeBase64(txt); // url-safe بدون padding const link = "vmess://" + b64; $("#encodeOut").textContent = JSON.stringify(it, null, 2) + "\\\\n\\\\n" + link; return link; } function handleCopyEncode(){ const out = $("#encodeOut").textContent.trim(); if(!out){ log("چیزی برای کپی نیست."); return; } copyText(out).then(()=> log("خروجی Encode کپی شد")).catch(e=>log("Clipboard error: "+e.message)); } function handleClearEncode(){ \["#e\_ps","#e\_add","#e\_port","#e\_id","#e\_net","#e\_host","#e\_path","#e\_tls"\].forEach(sel=>$(sel).value=""); $("#encodeOut").textContent = ""; } function loadSample(){ const sample = \[ {"v":"2","ps":"Sample-WS-TLS","add":"example.com","port":"443","id":"11111111-2222-3333-4444-555555555555","aid":"0","scy":"auto","net":"ws","type":"none","host":"example.com","path":"/","tls":"tls"}, {"v":"2","ps":"Another-Server","add":"10.0.0.1","port":"8443","id":"aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee","aid":"0","scy":"auto","net":"tcp","type":"none","tls":"none"} \]; const lines = sample.map(o => "vmess://" + toUrlSafeBase64(JSON.stringify(o))); $("#inputBox").value = lines.join("\\\\n"); log("۲ نمونه تست اضافه شد."); } // Tabs $$(".tab").forEach(t=>t.addEventListener("click", ()=>{ $$(".tab").forEach(x=>x.classList.remove("active")); t.classList.add("active"); const to = t.dataset.tab; $$(".panel").forEach(p=>p.classList.add("hidden")); $("#panel-"+to).classList.remove("hidden"); })); // Buttons $("#decodeBtn").addEventListener("click", handleDecode); $("#clearBtn").addEventListener("click", handleClear); $("#encodeBtn").addEventListener("click", ()=>{ const link = handleEncode(); if(link) copyText(link).then(()=>log("لینک vmess کپی شد")) }); $("#copyEncode").addEventListener("click", handleCopyEncode); $("#clearEncode").addEventListener("click", handleClearEncode); $("#loadSample").addEventListener("click", loadSample); // File upload $("#fileInput").addEventListener("change", async (e)=>{ const f = e.target.files?.\[0\]; if(!f) return; const txt = await f.text(); $("#inputBox").value = txt; log(\`فایل بارگذاری شد: ${f.name} (${f.size} bytes)\`); }); // Copy/Download outputs $("#copyJson").addEventListener("click", ()=>{ const txt = $("#jsonOut").textContent.trim(); if(!txt){ log("JSON خالی است."); return; } copyText(txt).then(()=>log("JSON کپی شد")); }); $("#downloadJson").addEventListener("click", ()=>{ const txt = $("#jsonOut").textContent; downloadFile("vmess\_decoded.json", txt, "application/json"); }); $("#copyClash").addEventListener("click", ()=>{ const txt = $("#clashOut").textContent.trim(); if(!txt){ log("Clash YAML خالی است."); return; } copyText(txt).then(()=>log("Clash YAML کپی شد")); }); $("#downloadClash").addEventListener("click", ()=>{ const txt = $("#clashOut").textContent; downloadFile("clash\_proxies.yaml", txt, "text/yaml"); }); $("#copySing").addEventListener("click", ()=>{ const txt = $("#singOut").textContent.trim(); if(!txt){ log("Sing-Box JSON خالی است."); return; } copyText(txt).then(()=>log("Sing-Box JSON کپی شد")); }); $("#downloadSing").addEventListener("click", ()=>{ const txt = $("#singOut").textContent; downloadFile("singbox\_outbounds.json", txt, "application/json"); }); $("#copyTable").addEventListener("click", ()=>{ // Copy as TSV const rows = lastItems.map((it,idx)=>summarize(it,idx)); if(!rows.length){ log("جدول خالی است."); return; } const header = Object.keys(rows\[0\]); const lines = \[header.join("\\\\t")\].concat(rows.map(r=>header.map(h=>String(r\[h\]??"")).join("\\\\t"))); copyText(lines.join("\\\\n")).then(()=>log("جدول به صورت TSV کپی شد")); }); $("#downloadTable").addEventListener("click", ()=>{ const rows = lastItems.map((it,idx)=>summarize(it,idx)); if(!rows.length){ log("جدول خالی است."); return; } const csv = toCSV(rows); downloadFile("vmess\_summary.csv", csv, "text/csv"); }); // Default renderSummary(\[\]);
